@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme: dark; font-family: 'Liberation Sans', 'Open Sans', 'Arial', 'Verdana', 'Helvetica', 'sans-serif'">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <title>{{.Host}} error {{placeholder "http.error.status_code"}}</title>
+</head>
+<body style="display: flex; flex-direction: column; align-items: center">
+<div>
+    <h1>{{.Host}} error {{placeholder "http.error.status_code"}}</h1>
+    <p style="margin-bottom: 2em">OOopsie Whoopsie, seems like you messed up!</p>
+    <p>You tried requesting <code>{{.OriginalReq.Method}} {{.OriginalReq.URL}}</code> using <code>{{.Req.Proto}}</code>.
+    </p>
+    <p>You've received an error <code>{{placeholder "http.error.status_code"}} {{placeholder "http.error.status_text"}}</code> instead!</p>
+    <p><code>{{placeholder "time.now.http"}}</code></p>
+</div>
+</body>
+</html>

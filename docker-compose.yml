@@ -1,0 +1,78 @@
+services:
+  server:
+    build: ./server
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    user: "$FILE_OWNER_USER"
+    volumes:
+    - ./server-data:/data
+    init: true
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    environment:
+      ENDPOINT: "$SPACEBAR_ENDPOINT"
+      THREADS: "$SPACEBAR_THREADS"
+      INSTANCE_NAME: "$INSTANCE_NAME"
+      INSTANCE_DESC: "$INSTANCE_DESC"
+      INSTANCE_CONTACT_EMAIL: "$INSTANCE_CONTACT_EMAIL"
+      INSTANCE_CONTACT_USER_ID: "$INSTANCE_CONTACT_USER_ID"
+      INSTANCE_HOMEPAGE_URL: "$INSTANCE_HOMEPAGE_URL"
+      INSTANCE_TOS_URL: "$INSTANCE_TOS_URL"
+      DATABASE: "postgres://$DB_USER:$DB_PASS@database:5432/$DB_DATABASE"
+  database:
+    image: postgres
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "$DB_USER"
+      POSTGRES_PASSWORD: "$DB_PASS"
+      POSTGRES_DB: "$DB_DATABASE"
+    volumes:
+    - ./database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "--dbname=$DB_DATABASE", "--username=$DB_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  rabbitmq:
+    image: rabbitmq
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  client:
+    build: ./client
+    tty: true
+    stdin_open: true
+    init: true
+    restart: unless-stopped
+    user: "$FILE_OWNER_USER"
+    volumes:
+    - ./client-data:/data
+  caddy:
+    image: caddy
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    volumes:
+    - ./caddy:/etc/caddy:ro
+    environment:
+      ENDPOINT: "$SPACEBAR_ENDPOINT"
+      INSTANCE_HOMEPAGE_URL: "$INSTANCE_HOMEPAGE_URL"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "http://127.0.0.1:8080/up"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+    - server
+    - client

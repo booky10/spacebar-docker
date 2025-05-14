@@ -1,0 +1,11 @@
+[*.mjs]
+indent_style = space
+indent_size = 4
+ij_continuation_indent_size = 8
+ij_javascript_use_semicolon_after_statement = true
+ij_javascript_force_semicolon_style = true
+ij_javascript_use_double_quotes = true
+ij_javascript_force_quote_style = true
+
+[Caddyfile]
+indent_style = tab

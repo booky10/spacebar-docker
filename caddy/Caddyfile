@@ -1,0 +1,79 @@
+{
+	# this has no proper TLS setup, so force-disable automatic TLS
+	auto_https off
+	# disable admin api, it's not used here
+	admin off
+	# trust incoming ip range
+	servers {
+		trusted_proxies static 172.16.0.0/12
+	}
+}
+
+# handles server api route discovery and "splitting" one domain
+# into the proper bundled server routes
+:8080 {
+	# collapse duplicate slashes everywhere
+	uri path_regexp /{2,} /
+	# prevent mime type sniffing
+	header * X-Content-Type-Options nosniff
+	# ensure default value
+	header * Referrer-Policy strict-origin-when-cross-origin
+
+	# small healthcheck endpoint
+	handle /up {
+		respond * "OK" 200
+	}
+
+	# handle spacebar server api route discovery
+	handle /.well-known/spacebar {
+		# CORS
+		header * Access-Control-Allow-Origin *
+		header * Access-Control-Allow-Headers Content-Type,Accept
+		header * Access-Control-Allow-Methods GET
+		# respond with api endpoint url
+		header * Content-Type "application/json; charset=utf-8"
+		respond * "{\"api\":\"{env.ENDPOINT}/api/v9\"}"
+	}
+
+	# redir verify route to proper location
+	redir /api/verify /verify
+	# proxy all relevant spacebar server api routes
+	@server <<CEL
+		{path}.startsWith("/api/")
+			|| {path} == "/verify"
+			|| header({ "Connection": "*Upgrade*", "Upgrade": "websocket" })
+		CEL
+	handle @server {
+		reverse_proxy * http://server:8080
+	}
+	# proxy image proxy, but replace the prefix with the proper one
+	handle_path /img/* {
+		rewrite * /imageproxy{uri}
+		reverse_proxy * http://server:8080
+	}
+	# proxy cdn, but strip the url prefix
+	handle_path /cdn/* {
+		reverse_proxy * http://server:8080
+	}
+
+	# otherwise, just redirect to the homepage if available and on the root page
+	@homepage <<CEL
+		{env.INSTANCE_HOMEPAGE_URL} != ""
+			&& {path} == "/"
+			&& !header({ "Connection": "*Upgrade*", "Upgrade": "websocket" })
+		CEL
+	redir @homepage {env.INSTANCE_HOMEPAGE_URL}
+
+	# some generic error handling
+	handle_errors {
+		rewrite * /error.html
+		templates
+		root * /etc/caddy/static
+		file_server
+	}
+
+	# if the request can't be handled, send 404 error
+	handle {
+		error 404
+	}
+}
