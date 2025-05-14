@@ -5,7 +5,7 @@ import * as child_process from "node:child_process";
 const database = process.env.DATABASE;
 if (!database.startsWith("postgres://")) {
     console.error("Database pre-configuration is only supported if using postgres, skipped");
-    process.exit(1);
+    process.exit(0);
 }
 
 import {Client} from "pg";
