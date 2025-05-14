@@ -35,10 +35,12 @@ LABEL       org.opencontainers.image.licenses=MIT
 COPY        --from=builder --chown=node:node /home/builder/work /app
 USER        node
 
-WORKDIR     /data
-# initializes data and some config settings
 COPY        ./setup /setup/entrypoint
+WORKDIR     /setup/entrypoint
+RUN         npm ci
+
 COPY        ./badge-icons /setup/badge-icons
+WORKDIR     /data
 
 ENV         PORT=8080
 EXPOSE      8080
