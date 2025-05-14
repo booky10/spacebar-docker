@@ -1,0 +1,7 @@
+services:
+  caddy:
+    ports:
+    - "4264:8080"
+  client:
+    ports:
+    - "4265:8080"
