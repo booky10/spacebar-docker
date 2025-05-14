@@ -75,4 +75,3 @@ services:
       retries: 5
     depends_on:
     - server
-    - client
