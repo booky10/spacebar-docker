@@ -35,11 +35,11 @@ LABEL       org.opencontainers.image.licenses=MIT
 COPY        --from=builder --chown=node:node /home/builder/work /app
 USER        node
 
-COPY        ./setup /setup/entrypoint
+COPY        --chown=node:node ./setup /setup/entrypoint
 WORKDIR     /setup/entrypoint
 RUN         npm ci
 
-COPY        ./badge-icons /setup/badge-icons
+COPY        --chown=node:node ./badge-icons /setup/badge-icons
 WORKDIR     /data
 
 ENV         PORT=8080
