@@ -14,6 +14,7 @@ I recommend you use two different domains - one for the spacebar server and one 
 
 After the last command has finished executing, the client should be accessible
 at [127.0.0.1:4265](http://127.0.0.1:4265/), or whatever you have configured in `docker-compose.override.yml`.
+Enter the instance url `http://127.0.0.1:4264/` (or whatever you have configured) in the client to access your spacebar server.
 
 I recommend you use a webserver (e.g. [Caddy](https://caddyserver.com/)) to expose the server and the client
 with a proper SSL certificate.
