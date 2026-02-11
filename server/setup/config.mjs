@@ -44,6 +44,7 @@ const execConfig = async (firstStart/**boolean*/) => {
     const endpoint = process.env.SPACEBAR_SERVER_URL;
     const wsEndpoint = endpoint.replace("http", "ws"); // https -> wss
     // update endpoint values
+    await update("api_endpointPrivate", `${endpoint}/api/v9`);
     await update("api_endpointPublic", `${endpoint}/api/v9`);
     await update("cdn_endpointPrivate", `${endpoint}/cdn`);
     await update("cdn_endpointPublic", `${endpoint}/cdn`);
@@ -62,6 +63,7 @@ const execConfig = async (firstStart/**boolean*/) => {
 
     // internal connection
     await update("rabbitmq_host", "amqp://guest:guest@rabbitmq:5672");
+    await update("security_forwardedFor", "X-Forwarded-For");
 
     // some more sane default values
     if (firstStart) {
