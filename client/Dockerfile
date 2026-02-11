@@ -40,5 +40,5 @@ ENV         PORT=8080
 EXPOSE      8080
 
 # specify app location for startup
-ENTRYPOINT  ["env", "NODE_PATH=/app/node_modules", "NODE_ENV=production", "/bin/ash", "/setup/jank-entrypoint.sh"]
+ENTRYPOINT  ["env", "NODE_PATH=/app/node_modules", "NODE_ENV=production", "/bin/sh", "/setup/jank-entrypoint.sh"]
 CMD         ["/usr/local/bin/node", "/app/dist/index.js"]

@@ -35,6 +35,11 @@
 		respond * "{\"api\":\"{env.SPACEBAR_SERVER_URL}/api/v9\"}"
 	}
 
+	# proxy webrtc websocket connection
+	handle_path /voice {
+		reverse_proxy * http://server:8081
+	}
+
 	# redir verify route to proper location
 	redir /api/verify /verify
 	# proxy all relevant spacebar server api routes

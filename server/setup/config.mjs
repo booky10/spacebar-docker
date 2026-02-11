@@ -40,17 +40,19 @@ const update = async (key/**string*/, value/**any*/) => {
 
 // calls configuration logic
 const execConfig = async (firstStart/**boolean*/) => {
-    /** @type string */
-    const endpoint = process.env.SPACEBAR_SERVER_URL;
-    const wsEndpoint = endpoint.replace("http", "ws"); // https -> wss
+    const endpoint = new URL(process.env.SPACEBAR_SERVER_URL);
+    const wsEndpoint = new URL(process.env.SPACEBAR_SERVER_URL);
+    wsEndpoint.protocol = wsEndpoint.protocol.replace("http", "ws");
     // update endpoint values
-    await update("api_endpointPrivate", `${endpoint}/api/v9`);
-    await update("api_endpointPublic", `${endpoint}/api/v9`);
-    await update("cdn_endpointPrivate", `${endpoint}/cdn`);
-    await update("cdn_endpointPublic", `${endpoint}/cdn`);
-    await update("cdn_imagorServerUrl", `${endpoint}/img`);
-    await update("gateway_endpointPrivate", wsEndpoint);
-    await update("gateway_endpointPublic", wsEndpoint);
+    await update("api_endpointPrivate", new URL("/api/v9", endpoint).href);
+    await update("api_endpointPublic", new URL("/api/v9", endpoint).href);
+    await update("cdn_endpointPrivate", new URL("/cdn", endpoint).href);
+    await update("cdn_endpointPublic", new URL("/cdn", endpoint).href);
+    await update("cdn_imagorServerUrl", new URL("/img", endpoint).href);
+    await update("gateway_endpointPrivate", wsEndpoint.href);
+    await update("gateway_endpointPublic", wsEndpoint.href);
+    const endpointAddr = endpoint.hostname + (endpoint.port ? ":" + endpoint.port : "");
+    await update("regions_available_0_endpoint", `${endpointAddr}/voice`);
 
     // some config values configurable via environment variables
     await update("general_serverName", process.env.SPACEBAR_LANDING_URL);

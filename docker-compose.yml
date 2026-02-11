@@ -24,6 +24,11 @@ services:
       INSTANCE_HOMEPAGE_URL: "$INSTANCE_HOMEPAGE_URL"
       INSTANCE_TOS_URL: "$INSTANCE_TOS_URL"
       DATABASE: "postgres://$DB_USER:$DB_PASS@database:5432/$DB_DATABASE"
+      WRTC_PUBLIC_IP: "$WRTC_PUBLIC_IP"
+      WRTC_PORT_MIN: "$WRTC_PORT_MIN"
+      WRTC_PORT_MAX: "$WRTC_PORT_MAX"
+    ports:
+    - "$WRTC_PORT_MIN-$WRTC_PORT_MAX:$WRTC_PORT_MIN-$WRTC_PORT_MAX/tcp"
   database:
     image: postgres
     tty: true
