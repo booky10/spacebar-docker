@@ -78,6 +78,13 @@ const execConfig = async (firstStart/**boolean*/) => {
     // gracefully shutdown connection
     await client.end();
 
+    if (firstStart) {
+        // run temporary server again to bootstrap rest of database; if we directly skip to production setup,
+        // we may run into issus if bootstrapping the database with more than one thread
+        console.log("Bootstrapping database with one temporary spacebar server...");
+        await runTempSpacebarServer();
+    }
+
     console.log("Finished configuration logic, proceeding with spacebar server launch...");
 };
 
@@ -99,9 +106,8 @@ const checkLoaded = async () => {
     `);
     return contentsResult.rowCount > 0;
 };
-// check whether the database has been initialized yet
-if (!(await checkLoaded())) {
-    console.log("Database isn't initialized yet, launching temporary server for initialization...");
+
+const runTempSpacebarServer = () /**Promise<number>*/ => {
     // extract spacebar server launch args from process argv
     const launchCli = process.argv.slice(2);
     const launchArgs = launchCli.slice(1);
@@ -140,16 +146,23 @@ if (!(await checkLoaded())) {
         }, 5 * 1000);
     }, 10 * 1000);
 
-    // after the init server has exited, continue processing
-    spacebarServer.on("exit", async (code) => {
-        if (!(await checkLoaded())) {
-            console.error("Initial server initialization failed!");
-            return process.exit(code);
-        } else {
-            console.log("Finished database initialization, applying configuration...");
-            await execConfig(true);
-        }
+    return new Promise(resolve => {
+        // after the init server has exited, continue processing
+        spacebarServer.on("exit", (code) => resolve(code));
     });
+};
+
+// check whether the database has been initialized yet
+if (!(await checkLoaded())) {
+    console.log("Database isn't initialized yet, launching temporary server for initialization...");
+    const exitCode = await runTempSpacebarServer();
+    if (!(await checkLoaded())) {
+        console.error("Initial server initialization failed!");
+        process.exit(exitCode ?? -1);
+    } else {
+        console.log("Finished database initialization, applying configuration...");
+        await execConfig(true);
+    }
 } else {
     // server has started at least once already, execute normal config
     await execConfig(false);
