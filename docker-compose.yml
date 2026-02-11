@@ -14,7 +14,8 @@ services:
       database:
         condition: service_healthy
     environment:
-      ENDPOINT: "$SPACEBAR_ENDPOINT"
+      SPACEBAR_SERVER_URL: "$SPACEBAR_SERVER_URL"
+      SPACEBAR_LANDING_URL: "$SPACEBAR_LANDING_URL"
       THREADS: "$SPACEBAR_THREADS"
       INSTANCE_NAME: "$INSTANCE_NAME"
       INSTANCE_DESC: "$INSTANCE_DESC"
@@ -33,7 +34,7 @@ services:
       POSTGRES_PASSWORD: "$DB_PASS"
       POSTGRES_DB: "$DB_DATABASE"
     volumes:
-    - ./database:/var/lib/postgresql/data
+    - ./database:/var/lib/postgresql
     healthcheck:
       test: ["CMD", "pg_isready", "--dbname=$DB_DATABASE", "--username=$DB_USER"]
       interval: 5s
@@ -66,8 +67,8 @@ services:
     volumes:
     - ./caddy:/etc/caddy:ro
     environment:
-      ENDPOINT: "$SPACEBAR_ENDPOINT"
-      INSTANCE_HOMEPAGE_URL: "$INSTANCE_HOMEPAGE_URL"
+      SPACEBAR_SERVER_URL: "$SPACEBAR_SERVER_URL"
+      SPACEBAR_CLIENT_URL: "$SPACEBAR_CLIENT_URL"
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://127.0.0.1:8080/up"]
       interval: 5s

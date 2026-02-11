@@ -5,7 +5,7 @@
 	admin off
 	# trust incoming ip range
 	servers {
-		trusted_proxies private_ranges
+		trusted_proxies static private_ranges
 	}
 }
 
@@ -32,7 +32,7 @@
 		header * Access-Control-Allow-Methods GET
 		# respond with api endpoint url
 		header * Content-Type "application/json; charset=utf-8"
-		respond * "{\"api\":\"{env.ENDPOINT}/api/v9\"}"
+		respond * "{\"api\":\"{env.SPACEBAR_SERVER_URL}/api/v9\"}"
 	}
 
 	# redir verify route to proper location
@@ -58,11 +58,11 @@
 
 	# otherwise, just redirect to the homepage if available and on the root page
 	@homepage <<CEL
-		{env.INSTANCE_HOMEPAGE_URL} != ""
+		{env.SPACEBAR_CLIENT_URL} != ""
 			&& {path} == "/"
 			&& !header({ "Connection": "*Upgrade*", "Upgrade": "websocket" })
 		CEL
-	redir @homepage {env.INSTANCE_HOMEPAGE_URL}
+	redir @homepage {env.SPACEBAR_CLIENT_URL}
 
 	# some generic error handling
 	handle_errors {

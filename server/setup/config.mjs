@@ -41,19 +41,18 @@ const update = async (key/**string*/, value/**any*/) => {
 // calls configuration logic
 const execConfig = async (firstStart/**boolean*/) => {
     /** @type string */
-    const endpoint = process.env.ENDPOINT;
+    const endpoint = process.env.SPACEBAR_SERVER_URL;
     const wsEndpoint = endpoint.replace("http", "ws"); // https -> wss
     // update endpoint values
     await update("api_endpointPublic", `${endpoint}/api/v9`);
-    await update("cdn_endpointClient", `${endpoint}/cdn`);
     await update("cdn_endpointPrivate", `${endpoint}/cdn`);
     await update("cdn_endpointPublic", `${endpoint}/cdn`);
     await update("cdn_imagorServerUrl", `${endpoint}/img`);
-    await update("gateway_endpointClient", wsEndpoint);
     await update("gateway_endpointPrivate", wsEndpoint);
     await update("gateway_endpointPublic", wsEndpoint);
 
     // some config values configurable via environment variables
+    await update("general_serverName", process.env.SPACEBAR_LANDING_URL);
     await update("general_instanceName", process.env.INSTANCE_NAME);
     await update("general_instanceDescription", process.env.INSTANCE_DESC);
     await update("general_correspondenceEmail", process.env.INSTANCE_CONTACT_EMAIL);
