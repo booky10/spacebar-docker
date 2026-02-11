@@ -1,0 +1,8 @@
+[
+  {
+    "name": "$INSTANCE_NAME",
+    "description": "$INSTANCE_DESC",
+    "image": "$INSTANCE_LOGO",
+    "url": "$SPACEBAR_LANDING_URL"
+  }
+]

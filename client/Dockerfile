@@ -21,6 +21,9 @@ LABEL       author="booky" maintainer="booky@booky.dev"
 LABEL       org.opencontainers.image.source="https://git.hserv.org/booky/spacebar-docker"
 LABEL       org.opencontainers.image.licenses=MIT
 
+# install dependencies
+RUN         apk add --update --no-cache envsubst jq
+
 # copy jank client files
 COPY        --from=builder --chown=node:node /home/builder/work /app
 USER        node
@@ -31,6 +34,7 @@ ENV         JANK_INSTANCES_PATH=/data/instances.json
 ENV         JANK_UPTIME_JSON_PATH=/data/uptime.json
 # initializes instances.json if it doesn't exist already
 COPY        ./entrypoint.sh /setup/jank-entrypoint.sh
+COPY        ./extra_instances.json /setup/jank-extra-instances.json
 
 ENV         PORT=8080
 EXPOSE      8080

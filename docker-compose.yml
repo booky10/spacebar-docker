@@ -59,6 +59,11 @@ services:
     user: "$FILE_OWNER_USER"
     volumes:
     - ./client-data:/data
+    environment:
+      INSTANCE_NAME: "$INSTANCE_NAME"
+      INSTANCE_DESC: "$INSTANCE_DESC"
+      INSTANCE_LOGO: "$INSTANCE_LOGO"
+      SPACEBAR_LANDING_URL: "$SPACEBAR_LANDING_URL"
   caddy:
     image: caddy
     tty: true
