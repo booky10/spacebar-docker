@@ -5,7 +5,7 @@
 	admin off
 	# trust incoming ip range
 	servers {
-		trusted_proxies static 172.16.0.0/12
+		trusted_proxies private_ranges
 	}
 }
 
@@ -15,9 +15,9 @@
 	# collapse duplicate slashes everywhere
 	uri path_regexp /{2,} /
 	# prevent mime type sniffing
-	header * X-Content-Type-Options nosniff
+	header * ?X-Content-Type-Options nosniff
 	# ensure default value
-	header * Referrer-Policy strict-origin-when-cross-origin
+	header * ?Referrer-Policy strict-origin-when-cross-origin
 
 	# small healthcheck endpoint
 	handle /up {

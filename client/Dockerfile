@@ -1,4 +1,4 @@
-FROM        --platform=$TARGETOS/$TARGETARCH node:22-alpine AS builder
+FROM        --platform=$TARGETOS/$TARGETARCH node:24-alpine AS builder
 
 # setup build env
 RUN         apk add --update --no-cache git \
@@ -7,18 +7,18 @@ USER        builder
 ENV         USER=builder HOME=/home/builder
 
 # clone sourcecode
-RUN         git clone https://github.com/MathMan05/JankClient.git /home/builder/work
+RUN         git clone https://github.com/MathMan05/Fermi.git /home/builder/work
 WORKDIR     /home/builder/work
 
 # install dependencies and build server (lockfile is missing?)
 RUN         npm i && npm run build
 
 # runtime image
-FROM        --platform=$TARGETOS/$TARGETARCH node:22-alpine
+FROM        --platform=$TARGETOS/$TARGETARCH node:24-alpine
 
 # some image meta stuff
-LABEL       author="booky10" maintainer="boooky10@gmail.com"
-LABEL       org.opencontainers.image.source="https://git.booky.dev/tpa/spacebar-docker"
+LABEL       author="booky" maintainer="booky@booky.dev"
+LABEL       org.opencontainers.image.source="https://git.hserv.org/booky/spacebar-docker"
 LABEL       org.opencontainers.image.licenses=MIT
 
 # copy jank client files

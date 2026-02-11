@@ -1,6 +1,6 @@
 # spacebar docker
 
-An easy-to-use full [spacebar](https://spacebar.chat/) and [JankClient](https://github.com/MathMan05/JankClient)
+An easy-to-use full [spacebar](https://spacebar.chat/) server and [Fermi](https://fermi.chat/) client
 setup for self-hosting.
 
 ## How to use
@@ -17,4 +17,4 @@ at [127.0.0.1:4265](http://127.0.0.1:4265/), or whatever you have configured in 
 Enter the instance url `http://127.0.0.1:4264/` (or whatever you have configured) in the client to access your spacebar server.
 
 I recommend you use a webserver (e.g. [Caddy](https://caddyserver.com/)) to expose the server and the client
-with a proper SSL certificate.
+with a proper SSL certificate via reverse proxying.
